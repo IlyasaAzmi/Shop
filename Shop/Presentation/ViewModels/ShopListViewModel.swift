@@ -11,7 +11,10 @@ import Foundation
 class ShopListViewModel: ObservableObject {
     @Published var products: [Product] = []
     @Published var isLoading = false
+    @Published var isRefreshing = false
     @Published var hasMoreItems = true
+
+    @Published var showAlert: Bool = false
     @Published var errorMessage: String?
     
     private let getProductsUseCase: GetProductsUseCase
@@ -24,31 +27,63 @@ class ShopListViewModel: ObservableObject {
     
     func loadInitialProducts() {
         guard products.isEmpty else { return }
-        loadMoreProducts()
+        
+        Task {
+            await loadProducts(skip: 0, isInitialLoad: true)
+        }
     }
-    
+
     func loadMoreProducts() {
-        guard !isLoading && hasMoreItems else { return }
+        guard !isLoading && !isRefreshing && hasMoreItems else { return }
         
         isLoading = true
-        errorMessage = nil
-        
         let skip = products.count
         
         Task {
-            do {
-                let result = try await getProductsUseCase.execute(limit: itemsPerPage, skip: skip)
-                
-                products.append(contentsOf: result.products)
-                totalItems = result.total
-                hasMoreItems = products.count < totalItems
-                
-            } catch {
-                errorMessage = "Failed to load products: \(error.localizedDescription)"
-            }
-            
+            await loadProducts(skip: skip, isInitialLoad: false)
             isLoading = false
         }
+    }
+    
+    func refreshProducts() {
+        guard !isRefreshing && !isLoading else { return }
+        
+        isRefreshing = true
+        
+        Task {
+            await loadProducts(skip: 0, isInitialLoad: true)
+            isRefreshing = false
+        }
+    }
+    
+    private func loadProducts(skip: Int, isInitialLoad: Bool) async {
+        clearErrorState()
+        
+        do {
+            let result = try await getProductsUseCase.execute(limit: itemsPerPage, skip: skip)
+            
+            if isInitialLoad {
+                products = result.products
+            } else {
+                products.append(contentsOf: result.products)
+            }
+            
+            totalItems = result.total
+            hasMoreItems = products.count < totalItems
+            
+        } catch {
+            handleError(error)
+        }
+    }
+    
+    private func clearErrorState() {
+        showAlert = false
+        errorMessage = nil
+    }
+    
+    private func handleError(_ error: Error) {
+        errorMessage = "Failed to load products: \(error.localizedDescription)"
+        showAlert = true
     }
     
     func shouldLoadMore(for product: Product) -> Bool {
