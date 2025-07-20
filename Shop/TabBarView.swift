@@ -29,7 +29,7 @@ struct TabBarView: View {
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
         )
         .padding(.horizontal, 48)
-        .padding(.bottom, 10)
+        .padding(.bottom, 8)
     }
 }
 
