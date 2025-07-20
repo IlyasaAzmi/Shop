@@ -12,7 +12,11 @@ struct ContentView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            ShopListBaseView()
+            if selectedTab == 0 {
+                ShopListBaseView()
+            } else if selectedTab == 1 {
+                BookmarkView()
+            }
 
             TabBarView(selectedTab: $selectedTab)
         }

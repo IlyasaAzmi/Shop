@@ -37,12 +37,11 @@ struct ShopListBaseView: View {
                     if viewModel.isLoading {
                         VStack {
                             ProgressView()
-                                .scaleEffect(0.8)
                             Text("Loading more items...")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         }
-                        .padding(.bottom, 16)
+                        .padding(.bottom, 32)
                     }
 
                 }

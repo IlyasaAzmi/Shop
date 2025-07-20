@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ProductCardView: View {
     let product: Product
-
-    @State private var isBookmarked: Bool = false
+    
+    @StateObject private var bookmarkManager = BookmarkManager.shared
 
     var body: some View {
         HStack(spacing: 16) {
@@ -45,13 +45,14 @@ struct ProductCardView: View {
             }
 
             VStack {
-                Image(systemName: isBookmarked ? "heart.fill" : "heart")
-                    .resizable()
-                    .frame(width: 16, height: 16)
-                    .foregroundColor(.purple)
-                    .onTapGesture {
-                        isBookmarked.toggle()
-                    }
+                Button(action: {
+                    bookmarkManager.toggleBookmark(product)
+                }) {
+                    Image(systemName: bookmarkManager.isBookmarked(product) ? "heart.fill" : "heart")
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                        .foregroundColor(bookmarkManager.isBookmarked(product) ? .purple : .gray)
+                }
 
                 Spacer()
             }

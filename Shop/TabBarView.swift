@@ -25,7 +25,7 @@ struct TabBarView: View {
         .padding(.vertical, 15)
         .background(
             RoundedRectangle(cornerRadius: 25)
-                .fill(.white)
+                .fill(.white.opacity(0.8))
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
         )
         .padding(.horizontal, 48)
