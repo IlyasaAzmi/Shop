@@ -8,14 +8,13 @@
 import SwiftUI
 
 struct ProductCardView: View {
-    let dummyUrl: String
-    let index: Int
+    let product: Product
 
     @State private var isBookmarked: Bool = false
 
     var body: some View {
         HStack(spacing: 16) {
-            AsyncImage(url: URL(string: dummyUrl)) { image in
+            AsyncImage(url: URL(string: product.thumbnail)) { image in
                 image
                     .resizable()
                     .aspectRatio(1, contentMode: .fit)
@@ -26,10 +25,22 @@ struct ProductCardView: View {
                     .frame(width: 64, height: 64)
             }
 
-            VStack(alignment: .leading) {
-                Text("Product Name \(index)")
+            VStack(alignment: .leading, spacing: 4) {
+                Text(product.title)
+                    .font(.headline)
+                    .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text("Product Price \(index)")
+                
+                Text(product.description)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Text("$\(product.price, specifier: "%.2f")")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 

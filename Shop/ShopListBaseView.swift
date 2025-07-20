@@ -8,30 +8,27 @@
 import SwiftUI
 
 struct ShopListBaseView: View {
-    let dummyUrl: String = "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
-    
-    @State private var displayedItems: [Int] = []
-    @State private var isLoading = false
-    @State private var hasMoreItems = true
-    
-    private let itemsPerPage = 10
-    private let totalItems = 100
-    
+    @StateObject private var viewModel = ShopListViewModel(
+        getProductsUseCase: GetProductsUseCaseImpl(
+            repository: ProductRepositoryImpl()
+        )
+    )
+
     var body: some View {
         ScrollView {
             headerView
 
             LazyVStack(spacing: 10) {
-                ForEach(displayedItems, id: \.self) { index in
-                    ProductCardView(dummyUrl: dummyUrl, index: index)
+                ForEach(viewModel.products) { product in
+                    ProductCardView(product: product)
                         .onAppear {
-                            if index == displayedItems.last && hasMoreItems && !isLoading {
-                                loadMoreItems()
+                            if viewModel.shouldLoadMore(for: product) {
+                                viewModel.loadMoreProducts()
                             }
                         }
                 }
                 
-                if isLoading {
+                if viewModel.isLoading {
                     VStack {
                         ProgressView()
                             .scaleEffect(0.8)
@@ -41,6 +38,22 @@ struct ShopListBaseView: View {
                     }
                     .padding(.bottom, 16)
                 }
+                
+                if let errorMessage = viewModel.errorMessage {
+                    VStack {
+                        Text("Error: \(errorMessage)")
+                            .font(.caption)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                        
+                        Button("Retry") {
+                            viewModel.loadMoreProducts()
+                        }
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                    }
+                    .padding()
+                }
 
                 Spacer()
                     .frame(height: 72)
@@ -48,9 +61,7 @@ struct ShopListBaseView: View {
             .frame(maxWidth: .infinity)
         }
         .onAppear {
-            if displayedItems.isEmpty {
-                loadMoreItems()
-            }
+            viewModel.loadInitialProducts()
         }
     }
 
@@ -67,23 +78,5 @@ struct ShopListBaseView: View {
             Spacer(minLength: 30)
         }
         .frame(height: 160)
-    }
-    
-    private func loadMoreItems() {
-        guard !isLoading && hasMoreItems else { return }
-        
-        isLoading = true
-        
-        // Simulate API call delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            let currentCount = displayedItems.count
-            let nextBatch = currentCount..<min(currentCount + itemsPerPage, totalItems)
-            
-            displayedItems.append(contentsOf: Array(nextBatch))
-            
-            // Check if we've reached the end
-            hasMoreItems = displayedItems.count < totalItems
-            isLoading = false
-        }
     }
 }
