@@ -1,5 +1,5 @@
 //
-//  ShopListBaseView.swift
+//  ProductListBaseView.swift
 //  Shop
 //
 //  Created by Ilyasa' Azmi on 20/07/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct ShopListBaseView: View {
-    @StateObject private var viewModel = ShopListViewModel(
+struct ProductListBaseView: View {
+    @StateObject private var viewModel = ProductListViewModel(
         getProductsUseCase: GetProductsUseCaseImpl(
             repository: ProductRepositoryImpl()
         )

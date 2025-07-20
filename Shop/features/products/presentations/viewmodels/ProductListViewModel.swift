@@ -1,5 +1,5 @@
 //
-//  ShopListViewModel.swift
+//  ProductListViewModel.swift
 //  Shop
 //
 //  Created by Ilyasa' Azmi on 20/07/25.
@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-class ShopListViewModel: ObservableObject {
+class ProductListViewModel: ObservableObject {
     @Published var products: [Product] = []
     @Published var isLoading = false
     @Published var isRefreshing = false
