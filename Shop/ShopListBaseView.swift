@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct ShopListBaseView: View {
+    let dummyUrl: String = "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
+
     var body: some View {
         ScrollView {
             headerView
 
-            VStack(spacing: 10) {
-                ForEach(0..<100) {
-                    Text("Item \($0)")
-                        .font(.title)
+            LazyVStack(spacing: 10) {
+                ForEach(0..<100) { index in
+                    ProductCardView(dummyUrl: dummyUrl, index: index)
                 }
             }
             .frame(maxWidth: .infinity)
