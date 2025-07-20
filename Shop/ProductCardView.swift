@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProductCardView: View {
     let product: Product
-    
+
     @StateObject private var bookmarkManager = BookmarkManager.shared
 
     var body: some View {

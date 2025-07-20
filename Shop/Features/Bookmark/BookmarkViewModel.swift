@@ -24,7 +24,9 @@ class BookmarkViewModel: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.loadBookmarks()
+            Task { @MainActor in
+                self?.loadBookmarks()
+            }
         }
     }
     

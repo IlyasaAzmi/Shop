@@ -31,7 +31,7 @@ class BookmarkManager: ObservableObject {
         } else {
             bookmarkRepository.addBookmark(product)
         }
-        objectWillChange.send()
+        notifyBookmarkChanged()
     }
     
     func isBookmarked(_ product: Product) -> Bool {
@@ -40,11 +40,16 @@ class BookmarkManager: ObservableObject {
     
     func addBookmark(_ product: Product) {
         bookmarkRepository.addBookmark(product)
-        objectWillChange.send()
+        notifyBookmarkChanged()
     }
     
     func removeBookmark(_ product: Product) {
         bookmarkRepository.removeBookmark(product)
+        notifyBookmarkChanged()
+    }
+    
+    private func notifyBookmarkChanged() {
         objectWillChange.send()
+        NotificationCenter.default.post(name: NSNotification.Name("BookmarkChanged"), object: nil)
     }
 }

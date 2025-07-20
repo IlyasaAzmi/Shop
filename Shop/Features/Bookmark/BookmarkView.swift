@@ -13,7 +13,7 @@ struct BookmarkView: View {
             repository: BookmarkRepositoryImpl()
         )
     )
-    
+
     var body: some View {
         ScrollView {
             headerView
